@@ -1,5 +1,7 @@
 package com.example.smartmusicplayer;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -34,7 +36,7 @@ public class SmartPlayerActivity extends AppCompatActivity {
     private String keeper = "";
 
     private ImageView playPauseBtn , nextBtn , prevBtn;
-    private TextView songName;
+    private TextView songNameTxt;
 
     private ImageView imageView;
     private RelativeLayout lowerRelativeLayout;
@@ -60,10 +62,7 @@ public class SmartPlayerActivity extends AppCompatActivity {
         imageView = findViewById(R.id.logo);
         lowerRelativeLayout= findViewById(R.id.lower);
         voiceEnabledBtn = findViewById(R.id.voice_on_btn);
-        songName = findViewById(R.id.songName);
-
-
-
+        songNameTxt  = findViewById(R.id.songName);
 
 
         parentRelativeLayout = findViewById(R.id.heymyaan);
@@ -72,6 +71,10 @@ public class SmartPlayerActivity extends AppCompatActivity {
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
+
+        validateAndStartPlaying();
+
+        imageView.setBackgroundResource(R.drawable.logo);
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
@@ -157,20 +160,46 @@ public class SmartPlayerActivity extends AppCompatActivity {
                 if (mode.equals("ON"))
                 {
                     mode="OFF";
-                    voiceEnabledBtn.setText("Turn on handsfree Mode");
+                    voiceEnabledBtn.setText("Turn on hands free Mode");
                     lowerRelativeLayout.setVisibility(View.VISIBLE);
                 }
                 else
                 {
                     mode="ON";
-                    voiceEnabledBtn.setText("Turn off handsfree Mode");
+                    voiceEnabledBtn.setText("Turn off hands free Mode");
                     lowerRelativeLayout.setVisibility(View.GONE);
                 }
             }
         });
     }
 
-    
+    private void validateAndStartPlaying()
+    {
+        if (mediaPlayer!=null)
+        {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
+
+        mySongs = new ArrayList<>();
+        mySongs = (ArrayList) bundle.getParcelableArrayList("song");
+
+        msongName = mySongs.get(position).getName();
+        String songName = intent.getStringExtra("name");
+
+        songNameTxt.setText(songName);
+        songNameTxt.setSelected(true);
+
+        position = bundle.getInt("position",0);
+        Uri uri = Uri.parse(mySongs.get(position).toString());
+
+        mediaPlayer = MediaPlayer.create(SmartPlayerActivity.this,uri);
+        mediaPlayer.start();
+    }
 
     private void checkVoiceCommandPermission(){
 
