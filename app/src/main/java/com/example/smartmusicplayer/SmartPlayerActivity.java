@@ -88,7 +88,7 @@ public class SmartPlayerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRmsChanged(float rmsdB) {
+            public void onRmsChanged(float rmsd) {
 
             }
 
@@ -115,8 +115,21 @@ public class SmartPlayerActivity extends AppCompatActivity {
                 if(matchesFound != null)
                 {
                     keeper=matchesFound.get(0);
+                    if(mode.equals("ON"))
+                    {
+                        if (keeper.equals("pause"))
+                        {
+                            playPauseSong();
+                            Toast.makeText(SmartPlayerActivity.this," Command : "+ keeper ,Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        if (keeper.equals("play"))
+                        {
+                            playPauseSong();
+                            Toast.makeText(SmartPlayerActivity.this," Command : "+ keeper ,Toast.LENGTH_LONG).show();
+                        }
+                    }
 
-                    Toast.makeText(SmartPlayerActivity.this," Result "+ keeper ,Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -171,6 +184,13 @@ public class SmartPlayerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        playPauseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPauseSong();
+            }
+        });
     }
 
     private void validateAndStartPlaying()
@@ -210,6 +230,24 @@ public class SmartPlayerActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
+        }
+    }
+
+    private void playPauseSong()
+    {
+        imageView.setBackgroundResource(R.drawable.four);
+
+        if(mediaPlayer.isPlaying())
+        {
+            playPauseBtn.setBackgroundResource(R.drawable.play);
+            mediaPlayer.pause();
+        }
+        else
+        {
+            playPauseBtn.setBackgroundResource(R.drawable.pause);
+            mediaPlayer.start();
+
+            imageView.setBackgroundResource(R.drawable.five);
         }
     }
 }
