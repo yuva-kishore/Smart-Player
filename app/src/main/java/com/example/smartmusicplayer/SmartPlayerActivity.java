@@ -119,8 +119,8 @@ public class SmartPlayerActivity extends AppCompatActivity {
                     {
                         if (keeper.equals("pause"))
                         {
+                            Toast.makeText(SmartPlayerActivity.this," Command : Pause" ,Toast.LENGTH_LONG).show();
                             playPauseSong();
-                            Toast.makeText(SmartPlayerActivity.this," Command : "+ keeper ,Toast.LENGTH_LONG).show();
                         }
                         else
                         if (keeper.equals("play"))
