@@ -74,7 +74,7 @@ public class SmartPlayerActivity extends AppCompatActivity {
 
         validateAndStartPlaying();
 
-        imageView.setBackgroundResource(R.drawable.logo);
+        imageView.setBackgroundResource(R.drawable.play_logo);
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
@@ -128,6 +128,18 @@ public class SmartPlayerActivity extends AppCompatActivity {
                             playPauseSong();
                             Toast.makeText(SmartPlayerActivity.this," Command : "+ keeper ,Toast.LENGTH_LONG).show();
                         }
+                        else
+                        if (keeper.equals("next"))
+                        {
+                            playNextSong();
+                            Toast.makeText(SmartPlayerActivity.this," Command : "+ keeper ,Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        if (keeper.equals("previous"))
+                        {
+                            playPreviousSong();
+                            Toast.makeText(SmartPlayerActivity.this," Command : "+ keeper ,Toast.LENGTH_LONG).show();
+                        }
                     }
 
                 }
@@ -153,11 +165,13 @@ public class SmartPlayerActivity extends AppCompatActivity {
                 switch (motionEvent.getAction())
                 {
                     case MotionEvent.ACTION_DOWN:
+                        mediaPlayer.pause();
                         speechRecognizer.startListening(speechRecognizerIntent);
                         keeper="";
                         break;
 
                     case MotionEvent.ACTION_UP:
+                        mediaPlayer.start();
                         speechRecognizer.stopListening();
                         break;
 
@@ -191,6 +205,28 @@ public class SmartPlayerActivity extends AppCompatActivity {
                 playPauseSong();
             }
         });
+
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer.getCurrentPosition()>0)
+                {
+                    playPreviousSong();
+                }
+            }
+        });
+
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer.getCurrentPosition()>0)
+                {
+                    playNextSong();
+                }
+            }
+        });
+
+
     }
 
     private void validateAndStartPlaying()
@@ -235,19 +271,76 @@ public class SmartPlayerActivity extends AppCompatActivity {
 
     private void playPauseSong()
     {
-        imageView.setBackgroundResource(R.drawable.four);
 
         if(mediaPlayer.isPlaying())
         {
-            playPauseBtn.setBackgroundResource(R.drawable.play);
+            imageView.setBackgroundResource(R.drawable.pause_logo);
             mediaPlayer.pause();
         }
         else
         {
-            playPauseBtn.setBackgroundResource(R.drawable.pause);
             mediaPlayer.start();
+            imageView.setBackgroundResource(R.drawable.play_logo);
+        }
+    }
 
-            imageView.setBackgroundResource(R.drawable.five);
+    private void playNextSong()
+    {
+        mediaPlayer.pause();
+        mediaPlayer.stop();
+        mediaPlayer.release();
+
+        position = ((position+1)%mySongs.size());
+
+        Uri uri = Uri.parse(mySongs.get(position).toString());
+        mediaPlayer = MediaPlayer.create(SmartPlayerActivity.this,uri);
+
+        msongName = mySongs.get(position).toString();
+        songNameTxt.setText(msongName);
+        mediaPlayer.start();
+
+        if(mediaPlayer.isPlaying())
+        {
+            imageView.setBackgroundResource(R.drawable.play_logo);
+        }
+        else
+        {
+            imageView.setBackgroundResource(R.drawable.pause_logo);
+        }
+    }
+
+    private void playPreviousSong()
+    {
+        mediaPlayer.pause();
+        mediaPlayer.stop();
+        mediaPlayer.release();
+
+        position = (position-1);
+
+        if(position<0)
+        {
+            position=mySongs.size()-1;
+        }
+        else
+        {
+            position=position%mySongs.size();
+        }
+
+
+        Uri uri = Uri.parse(mySongs.get(position).toString());
+        mediaPlayer = MediaPlayer.create(SmartPlayerActivity.this,uri);
+
+        msongName = mySongs.get(position).toString();
+        songNameTxt.setText(msongName);
+        mediaPlayer.start();
+
+        if(mediaPlayer.isPlaying())
+        {
+            imageView.setBackgroundResource(R.drawable.play_logo);
+        }
+        else
+        {
+            imageView.setBackgroundResource(R.drawable.pause_logo);
         }
     }
 }
